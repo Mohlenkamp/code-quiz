@@ -94,13 +94,19 @@ var questionDeck = [
         "answerWrong3": "None of the above"
     },
     {   "questionID": "11",
-    "questionType": "choice",
-    "numberChoices": "4",
-    "questionText": "The browser event submit allows us to do the following:",
-    "answerRight": "Submit a form using EITHER a button or the Enter key",
-    "answerWrong1": "Submit a form using ONLY the Enter key",
-    "answerWrong2": "Submit a form using ONLY a button",
-    "answerWrong3": "None of the above"
+        "questionType": "choice",
+        "numberChoices": "4",
+        "questionText": "The browser event submit allows us to do the following:",
+        "answerRight": "Submit a form using EITHER a button or the Enter key",
+        "answerWrong1": "Submit a form using ONLY the Enter key",
+        "answerWrong2": "Submit a form using ONLY a button",
+        "answerWrong3": "None of the above"
+    },
+    {   "questionID": "12",
+        "questionType": "ok",
+        "numberChoices": "1",
+        "questionText": "Congratulations! You finished all the questions within the time limit.",
+        "answerRight": "Yippee!",
     }
 ]   
 
@@ -110,10 +116,64 @@ var getRandomNumber = function (x, y){
         return Math.floor(Math.random() * (y - x + 1)) + x;
     }
 
-// Function to setup how the beginning screen looks
-function startingScreen(){
+function updateQuestion(question){
+    var mainEL = document.querySelector("#question-area");
+    var questionTextEl = document.createElement("div");
+    var questionNumber = question.questionID;
+    if ((!question) || (questionNumber === "0")){
+        //This is the title screen before the start of the game
+        questionTextEl.innerHTML = "<h1 class='main-question' id='Question0'>" + question.questionText + "</h1>";
+    }
+    else{
+        //This is a question change during the game
+        questionTextEl.innerHTML = "<h2 class='main-question' id='Question'>" + question.questionText + "</h2>";
+    }
+    mainEL.appendChild(questionTextEl)
+    var answerTextEl = document.createElement("div");
+    answerTextEl.className = "main-answers";
+    //Create a random location for the correct answer
+    var correctAnswerLocation = getRandomNumber(1,question.numberChoices)
+    var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
 
-    var questionTitle = document.createElement("h1");
-    questionTitle.className = "question";
-    questionTitle.textContent = "Coding Quiz Challenge"  
+    for (var i=1; i<=question.numberChoices; i++){
+        var answerButtonEl = document.createElement("button");
+        wrongAnswerLocation++;
+        if (i = correctAnswerLocation){
+            //This is where we put the right answer
+            answerButtonEl.textContent = question.answerRight
+            answerButtonEl.className = "answer-correct"
+            wrongAnswerLocation--
+        }
+        else {
+            //This is where we put a wrong answer
+            answerButtonEl.className = "answer-wrong"
+            switch (wrongAnswerLocation){
+            case 1: 
+                answerButtonEl.textContent = question.answerWrong1
+                break;
+            case 2: 
+                answerButtonEl.textContent = question.answerWrong2
+                break;
+            default: 
+                answerButtonEl.textContent = question.answerWrong3
+                break;
+            }
+            // debugger;
+        };  
+    questionTextEl.appendChild(answerButtonEl);   
+    }
 }
+
+
+
+
+// Function to setup how the beginning screen looks
+function startQuiz(){
+    //loop through all the questions in the deck
+    for (var i=1; i<questionDeck.length; i++){
+        updateQuestion(questionDeck[i]);
+        //TODO: timer increment
+    }
+
+}
+
