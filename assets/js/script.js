@@ -117,20 +117,26 @@ var getRandomNumber = function (x, y){
     }
 
 function updateQuestion(question){
-    var mainEL = document.querySelector("#question-area");
+    var mainEl = document.querySelector("main");
+    var questionTitleEl = document.createElement("div");
+    questionTitleEl.className = "questionTitleArea"
     var questionTextEl = document.createElement("div");
+    questionTextEl.className = "questionTextArea"
     var questionNumber = question.questionID;
-    if ((!question) || (questionNumber === "0")){
+    if (questionNumber === "0"){
         //This is the title screen before the start of the game
-        questionTextEl.innerHTML = "<h1 class='main-question' id='Question0'>" + question.questionText + "</h1>";
+        questionTitleEl.innerHTML = "<h1 class='main-title' id='title'>Coding Quiz Challenge</h1>"
+        mainEl.appendChild(questionTitleEl)
+        questionTextEl.innerHTML = "<h2 class='main-question' id='Question0'>" + question.questionText + "</h2>";
     }
     else{
         //This is a question change during the game
         questionTextEl.innerHTML = "<h2 class='main-question' id='Question'>" + question.questionText + "</h2>";
     }
-    mainEL.appendChild(questionTextEl)
+    mainEl.appendChild(questionTextEl)
     var answerTextEl = document.createElement("div");
     answerTextEl.className = "main-answers";
+    mainEl.appendChild(answerTextEl);
     //Create a random location for the correct answer
     var correctAnswerLocation = getRandomNumber(1,question.numberChoices)
     var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
@@ -160,7 +166,7 @@ function updateQuestion(question){
             }
             // debugger;
         };  
-    questionTextEl.appendChild(answerButtonEl);   
+    answerTextEl.appendChild(answerButtonEl);   
     }
 }
 
@@ -177,3 +183,4 @@ function startQuiz(){
 
 }
 
+updateQuestion(questionDeck[0]);

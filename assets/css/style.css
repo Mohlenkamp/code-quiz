@@ -32,14 +32,31 @@
   }
 
   main{
-      display: flex;
+      
       justify-content: center;
       color: black;
   }
-  main .question{
+
+  #title{
       margin-top: 50px;
+      display: flex;
+      padding-left:20%;
+      padding-right:20%;
+      justify-content: center;
+  }
+  
+ main div .main-question{
+      margin-top: 50px;
+      display:flex;
+      padding-left:20%;
+      padding-right:20%;
+      justify-content:center;
   }
 
-  main .answers{
-      
+  main .main-answers{
+    margin-top: 50px;
+    display:flex;
+    padding-left:20%;
+    padding-right:20%;
+    justify-content:center;
   }
