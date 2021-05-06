@@ -36,12 +36,8 @@
       justify-content: center;
       color: black;
   }
-  main .main-title{
-      margin-top: 50px;
-  }
-
   main .question{
-
+      margin-top: 50px;
   }
 
   main .answers{
