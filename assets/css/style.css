@@ -56,7 +56,10 @@
   main .main-answers{
     margin-top: 50px;
     display:flex;
+    flex-direction: column;
     padding-left:20%;
     padding-right:20%;
     justify-content:center;
+    align-content: flex-start;
+
   }

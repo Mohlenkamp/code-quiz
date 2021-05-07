@@ -5,9 +5,10 @@ var timer = 75;
 var questionDeck = [
     {   "questionID": "0",
         "questionType": "ok",
-        "numberChoices": "1",
+        "numberChoices": "2",
         "questionText": "Try to answer the following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your score and reduce your time limit by 10 seconds.",
-        "answerRight": "Ready to Start!"
+        "answerRight": "Ready to Start!",
+        "answerWrong1": "Waiting for a bit"
     },  
     {   "questionID": "1",
         "questionType": "choice",
@@ -112,63 +113,96 @@ var questionDeck = [
 
 var getRandomNumber = function (x, y){
         x = Math.ceil(x);
-        max = Math.floor(y);
-        return Math.floor(Math.random() * (y - x + 1)) + x;
+        y = Math.floor(y);
+        var randomNumber = Math.floor(Math.random() * (y - x + 1)) + x;
+        console.log("Random number is: " + randomNumber)
+        return randomNumber
     }
 
 function updateQuestion(question){
-    var mainEl = document.querySelector("main");
-    var questionTitleEl = document.createElement("div");
-    questionTitleEl.className = "questionTitleArea"
-    var questionTextEl = document.createElement("div");
-    questionTextEl.className = "questionTextArea"
     var questionNumber = question.questionID;
-    if (questionNumber === "0"){
+    if (questionNumber === "0") {
         //This is the title screen before the start of the game
+        //Using this to setup the HTML structure
+        var mainEl = document.querySelector("main");
+        var questionTitleEl = document.createElement("div");
+        questionTitleEl.className = "questionTitleArea"
+        var questionTextEl = document.createElement("div");
+        questionTextEl.className = "questionTextArea"
         questionTitleEl.innerHTML = "<h1 class='main-title' id='title'>Coding Quiz Challenge</h1>"
         mainEl.appendChild(questionTitleEl)
         questionTextEl.innerHTML = "<h2 class='main-question' id='Question0'>" + question.questionText + "</h2>";
-    }
-    else{
-        //This is a question change during the game
-        questionTextEl.innerHTML = "<h2 class='main-question' id='Question'>" + question.questionText + "</h2>";
-    }
-    mainEl.appendChild(questionTextEl)
-    var answerTextEl = document.createElement("div");
-    answerTextEl.className = "main-answers";
-    mainEl.appendChild(answerTextEl);
-    //Create a random location for the correct answer
-    var correctAnswerLocation = getRandomNumber(1,question.numberChoices)
-    var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
-
-    for (var i=1; i<=question.numberChoices; i++){
-        var answerButtonEl = document.createElement("button");
-        wrongAnswerLocation++;
-        if (i = correctAnswerLocation){
-            //This is where we put the right answer
-            answerButtonEl.textContent = question.answerRight
-            answerButtonEl.className = "answer-correct"
-            wrongAnswerLocation--
+        mainEl.appendChild(questionTextEl)
+        var answerTextEl = document.createElement("div");
+        answerTextEl.className = "main-answers";
+        mainEl.appendChild(answerTextEl);
+        //Creating the 4 answer buttons
+        for (var i=1; i<5; i++) {
+            var answerButtonEl = document.createElement("button");
+            var setAnswerButtonClass = "btn-answer-" + i.toString();
+            answerButtonEl.className = (setAnswerButtonClass)
+            if (i==1){
+                answerButtonEl.textContent = "Ready to Start Quiz"
+                answerTextEl.appendChild(answerButtonEl)}
+            else
+                {answerButtonEl.style.visibility="hidden"
+                answerTextEl.appendChild(answerButtonEl)}
         }
-        else {
-            //This is where we put a wrong answer
-            answerButtonEl.className = "answer-wrong"
-            switch (wrongAnswerLocation){
-            case 1: 
-                answerButtonEl.textContent = question.answerWrong1
-                break;
-            case 2: 
-                answerButtonEl.textContent = question.answerWrong2
-                break;
-            default: 
-                answerButtonEl.textContent = question.answerWrong3
-                break;
-            }
-            // debugger;
-        };  
-    answerTextEl.appendChild(answerButtonEl);   
     }
-}
+    if (questionNumber!=="0"){
+        //This is a question change during the game
+        questionTextEl.innerHTML = "<h2 class='main-question' id='Question'" + questionNumber + ">" + question.questionText + "</h2>";
+    
+        //Create a random location for the correct answer
+        //debugger;
+        
+        var correctAnswerLocation = getRandomNumber(1,parseInt(question.numberChoices))
+        var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
+        console.log("Number of choices is: " + question.numberChoices.toString())
+        //Hiding or showing answer buttons based on number of choices for each question.
+        for (var i=1; i<=4; i++){
+            var customClassName = "btn-answer-" + i.toString()
+            var buttonEl = document.getElementsByClassName(customClassName)
+            if (i <= parseInt(question.numberChoices)){
+                answerButtonEl.style.visibility="visible"
+                } 
+            else{
+                answerButtonEl.style.visibility="hidden";
+            }    
+        }
+        for (var i=1; i<=parseInt(question.numberChoices); i++){
+            var customClassName = "btn-answer-" + i.toString()
+            var buttonEl = document.getElementsByClassName(customClassName)
+            wrongAnswerLocation++;
+            console.log("Correct answer location number is: " + correctAnswerLocation.toString())
+            console.log("Wrong answer location number is: " + wrongAnswerLocation.toString())
+            if (i = correctAnswerLocation){
+                //This is where we put the right answer
+                buttonEl.textContent = question.answerRight;
+                buttonEl.setAttribute("id", "correct");
+                wrongAnswerLocation--
+                console.log("Correct button is at location: " + i.toString)
+            }
+            else {
+            //This is where we put a wrong answer
+            switch (wrongAnswerLocation){
+                case 1: 
+                    buttonEl.textContent = question.answerWrong1
+                    buttonEl.setAttribute("id", "wrong")
+                    break;
+                case 2: 
+                    buttonEl.textContent = question.answerWrong2
+                    buttonEl.setAttribute("id", "wrong")
+                    break;
+                default: 
+                    buttonEl.textContent = question.answerWrong3
+                    buttonEl.setAttribute("id", "wrong")
+                    break;
+                }
+            } 
+        }
+    }
+ } //end function
 
 
 
@@ -183,4 +217,6 @@ function startQuiz(){
 
 }
 
+// Show title screen 
 updateQuestion(questionDeck[0]);
+console.dir()
