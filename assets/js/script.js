@@ -1,5 +1,6 @@
 // Set Globals
-var timer = 75;
+var timeLeft = 75;
+var timerEl = document.getElementById('remaining-time');
 
 //Create questions for the quiz
 var questionDeck = [
@@ -139,64 +140,74 @@ function updateQuestion(question){
         //Creating the 4 answer buttons
         for (var i=1; i<5; i++) {
             var answerButtonEl = document.createElement("button");
-            var setAnswerButtonClass = "btn-answer-" + i.toString();
-            answerButtonEl.className = (setAnswerButtonClass)
+            var setAnswerButtonId = "btn-answer-" + i.toString();
+            answerButtonEl.className = ("btn-answer")
+            answerButtonEl.setAttribute("id", setAnswerButtonId)
             if (i==1){
                 answerButtonEl.textContent = "Ready to Start Quiz"
                 answerTextEl.appendChild(answerButtonEl)}
             else
-                {answerButtonEl.style.visibility="hidden"
+                {answerButtonEl.hidden = true
                 answerTextEl.appendChild(answerButtonEl)}
         }
     }
     if (questionNumber!=="0"){
-        //This is a question change during the game
+        //The game has started
+        console.log("The game's afoot with question: " + questionNumber)
+        var questionTextEl = document.getElementsByClassName("main-question")
         questionTextEl.innerHTML = "<h2 class='main-question' id='Question'" + questionNumber + ">" + question.questionText + "</h2>";
     
         //Create a random location for the correct answer
-        //debugger;
-        
+
         var correctAnswerLocation = getRandomNumber(1,parseInt(question.numberChoices))
         var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
         console.log("Number of choices is: " + question.numberChoices.toString())
+
         //Hiding or showing answer buttons based on number of choices for each question.
         for (var i=1; i<=4; i++){
-            var customClassName = "btn-answer-" + i.toString()
-            var buttonEl = document.getElementsByClassName(customClassName)
+            var customIdName = "btn-answer-" + i.toString()
+            console.log(customIdName)
+            var buttonEl = document.getElementById(customIdName)
             if (i <= parseInt(question.numberChoices)){
-                answerButtonEl.style.visibility="visible"
+                buttonEl.hidden = false
                 } 
             else{
-                answerButtonEl.style.visibility="hidden";
+                buttonEl.hidden = true
             }    
         }
-        for (var i=1; i<=parseInt(question.numberChoices); i++){
-            var customClassName = "btn-answer-" + i.toString()
-            var buttonEl = document.getElementsByClassName(customClassName)
-            wrongAnswerLocation++;
+        //
+        i=1
+        while (i<=parseInt(question.numberChoices)){
+            customIDName = "btn-answer-" + i.toString()
+            buttonEl = document.getElementById(customIDName)
+            wrongAnswerLocation = wrongAnswerLocation +1;
+            debugger
             console.log("Correct answer location number is: " + correctAnswerLocation.toString())
             console.log("Wrong answer location number is: " + wrongAnswerLocation.toString())
-            if (i = correctAnswerLocation){
+            if (i === correctAnswerLocation){
                 //This is where we put the right answer
                 buttonEl.textContent = question.answerRight;
-                buttonEl.setAttribute("id", "correct");
-                wrongAnswerLocation--
-                console.log("Correct button is at location: " + i.toString)
-            }
+                buttonEl.setAttribute("data-answer","correct");
+                wrongAnswerLocation=wrongAnswerLocation-1
+                i=i+1
+                }
             else {
             //This is where we put a wrong answer
             switch (wrongAnswerLocation){
                 case 1: 
                     buttonEl.textContent = question.answerWrong1
-                    buttonEl.setAttribute("id", "wrong")
+                    buttonEl.setAttribute("data-answer", "wrong")
+                    i=i+1
                     break;
                 case 2: 
                     buttonEl.textContent = question.answerWrong2
-                    buttonEl.setAttribute("id", "wrong")
+                    buttonEl.setAttribute("data-answer", "wrong")
+                    i=i+1
                     break;
                 default: 
                     buttonEl.textContent = question.answerWrong3
-                    buttonEl.setAttribute("id", "wrong")
+                    buttonEl.setAttribute("data-answer", "wrong")
+                    i=i+1
                     break;
                 }
             } 
@@ -204,19 +215,51 @@ function updateQuestion(question){
     }
  } //end function
 
+function checkAnswer(buttonPressed){
+    //TODO
+}
 
+
+ function waitforanswer() {
+    var downloadTimer = setInterval(function(){
+      if(timeLeft <= 0){
+        clearInterval(downloadTimer);
+      }
+      document.getElementById("remaining-time").value = timeLeft;
+      timeLeft -= 1;
+    }, 1000);
+    var answerButton1El = document.getElementById("btn-answer-1")
+    var answerButton2El = document.getElementById("btn-answer-2")
+    var answerButton3El = document.getElementById("btn-answer-3")
+    var answerButton4El = document.getElementById("btn-answer-4")
+    answerButton1El(addEventListener('click', checkAnswer(1)))
+    answerButton2El(addEventListener('click', checkAnswer(2)))
+    answerButton3El(addEventListener('click', checkAnswer(3)))
+    answerButton4El(addEventListener('click', checkAnswer(4)))
+}
 
 
 // Function to setup how the beginning screen looks
 function startQuiz(){
     //loop through all the questions in the deck
+    console.log ("Starting Quiz")
     for (var i=1; i<questionDeck.length; i++){
+        bAnswered=false
         updateQuestion(questionDeck[i]);
-        //TODO: timer increment
+        while (!bAnswered && (timeLeft>0)){
+            waitforanswer();
+        }
+        debugger;
+
+        //TODO: Answer event listener
+        
+        debugger
     }
 
 }
 
 // Show title screen 
-updateQuestion(questionDeck[0]);
-console.dir()
+updateQuestion(questionDeck[0], false);
+var beginQuizEl = document.getElementById("btn-answer-1")
+beginQuizEl.addEventListener('click',startQuiz)
+
