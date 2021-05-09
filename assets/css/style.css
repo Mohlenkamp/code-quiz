@@ -48,18 +48,23 @@
  main div .main-question{
       margin-top: 50px;
       display:flex;
-      padding-left:20%;
-      padding-right:20%;
+      padding-left:10%;
+      padding-right:10%;
       justify-content:center;
+      font-size: large;
+      
   }
 
   main .main-answers{
-    margin-top: 50px;
     display:flex;
     flex-direction: column;
     padding-left:20%;
     padding-right:20%;
     justify-content:center;
-    align-content: flex-start;
+  }
+
+  main .main-answers button{
+    margin-top: 5px;
+    text-align: left;
 
   }

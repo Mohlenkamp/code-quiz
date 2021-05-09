@@ -1,6 +1,9 @@
 // Set Globals
-var timeLeft = 75;
-var timerEl = document.getElementById('remaining-time');
+var bButtonPressed = false
+var questionNumber = "0"
+var bEndOfGame = false
+var timeLeft
+var endQuizTime
 
 //Create questions for the quiz
 var questionDeck = [
@@ -43,7 +46,7 @@ var questionDeck = [
         "answerRight": "The computer object",
         "answerWrong1": "The startUp() method",
         "answerWrong2": "The JavaScript file",
-        "answerWrong3": "The window object;"
+        "answerWrong3": "The window object"
     },
     {   "questionID": "5",
         "questionType": "truefalse",
@@ -121,10 +124,11 @@ var getRandomNumber = function (x, y){
     }
 
 function updateQuestion(question){
-    var questionNumber = question.questionID;
+    questionNumber = question.questionID;
     if (questionNumber === "0") {
         //This is the title screen before the start of the game
         //Using this to setup the HTML structure
+  
         var mainEl = document.querySelector("main");
         var questionTitleEl = document.createElement("div");
         questionTitleEl.className = "questionTitleArea"
@@ -132,7 +136,7 @@ function updateQuestion(question){
         questionTextEl.className = "questionTextArea"
         questionTitleEl.innerHTML = "<h1 class='main-title' id='title'>Coding Quiz Challenge</h1>"
         mainEl.appendChild(questionTitleEl)
-        questionTextEl.innerHTML = "<h2 class='main-question' id='Question0'>" + question.questionText + "</h2>";
+        questionTextEl.innerHTML = "<h2 class='main-question' id='Question'>" + question.questionText + "</h2>";
         mainEl.appendChild(questionTextEl)
         var answerTextEl = document.createElement("div");
         answerTextEl.className = "main-answers";
@@ -150,23 +154,29 @@ function updateQuestion(question){
                 {answerButtonEl.hidden = true
                 answerTextEl.appendChild(answerButtonEl)}
         }
+        //Create the Correct/Wrong response div
+        var footerEl = document.querySelector("footer");
+        var responseTextEl = document.createElement("div")
+        responseTextEl.className = "responseTextArea"
+        //responseTextEl.setAttribute("hidden",true)
+        responseTextEl.innerHTML = "<h2 class='responseTextArea' id='response-value'>Ready</h2>"
+        footerEl.appendChild(responseTextEl)
     }
     if (questionNumber!=="0"){
         //The game has started
         console.log("The game's afoot with question: " + questionNumber)
-        var questionTextEl = document.getElementsByClassName("main-question")
-        questionTextEl.innerHTML = "<h2 class='main-question' id='Question'" + questionNumber + ">" + question.questionText + "</h2>";
+        var questionTextEl = document.getElementById("Question")
+        questionTextEl.textContent = question.questionText
     
         //Create a random location for the correct answer
-
         var correctAnswerLocation = getRandomNumber(1,parseInt(question.numberChoices))
         var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
-        console.log("Number of choices is: " + question.numberChoices.toString())
+       //console.log("Number of choices is: " + question.numberChoices.toString())
 
         //Hiding or showing answer buttons based on number of choices for each question.
         for (var i=1; i<=4; i++){
-            var customIdName = "btn-answer-" + i.toString()
-            console.log(customIdName)
+            customIdName = "btn-answer-" + i.toString()
+            //console.log(customIdName)
             var buttonEl = document.getElementById(customIdName)
             if (i <= parseInt(question.numberChoices)){
                 buttonEl.hidden = false
@@ -181,9 +191,8 @@ function updateQuestion(question){
             customIDName = "btn-answer-" + i.toString()
             buttonEl = document.getElementById(customIDName)
             wrongAnswerLocation = wrongAnswerLocation +1;
-            debugger
-            console.log("Correct answer location number is: " + correctAnswerLocation.toString())
-            console.log("Wrong answer location number is: " + wrongAnswerLocation.toString())
+            //console.log("Correct answer location number is: " + correctAnswerLocation.toString())
+            //console.log("Wrong answer location number is: " + wrongAnswerLocation.toString())
             if (i === correctAnswerLocation){
                 //This is where we put the right answer
                 buttonEl.textContent = question.answerRight;
@@ -215,51 +224,110 @@ function updateQuestion(question){
     }
  } //end function
 
-function checkAnswer(buttonPressed){
-    //TODO
+function updateScore(bCorrect){
+    
+   // if bCorrect{
+
+  //  }
+ //   else{
+
+   // }
+
 }
 
 
- function waitforanswer() {
-    var downloadTimer = setInterval(function(){
-      if(timeLeft <= 0){
-        clearInterval(downloadTimer);
-      }
-      document.getElementById("remaining-time").value = timeLeft;
-      timeLeft -= 1;
-    }, 1000);
-    var answerButton1El = document.getElementById("btn-answer-1")
-    var answerButton2El = document.getElementById("btn-answer-2")
-    var answerButton3El = document.getElementById("btn-answer-3")
-    var answerButton4El = document.getElementById("btn-answer-4")
-    answerButton1El(addEventListener('click', checkAnswer(1)))
-    answerButton2El(addEventListener('click', checkAnswer(2)))
-    answerButton3El(addEventListener('click', checkAnswer(3)))
-    answerButton4El(addEventListener('click', checkAnswer(4)))
-}
-
-
-// Function to setup how the beginning screen looks
-function startQuiz(){
-    //loop through all the questions in the deck
-    console.log ("Starting Quiz")
-    for (var i=1; i<questionDeck.length; i++){
-        bAnswered=false
-        updateQuestion(questionDeck[i]);
-        while (!bAnswered && (timeLeft>0)){
-            waitforanswer();
+function checkAnswer(answerPressed){
+    var responseTextEl = document.getElementById("response-value")
+    if (answerPressed){  
+        switch (answerPressed.target.getAttribute("data-answer")){
+        // This will be either "correct" or "wrong" 
+        case "correct":
+            console.log("Answer was correct")
+            responseTextEl.textContent="Correct"
+            updateScore(true);
+            break;
+        case "wrong":
+            console.log("Answer was wrong")
+            responseTextEl.textContent="Wrong"
+            //if incorrect subtract 10 more seconds
+            endQuizTime = new Date(endQuizTime.getTime() - 10000 );
+            //endQuizTime = endQuizTime - 8000
+            updateScore(false);
+            break;
+        default:
+            //This will happen only if the data-answer value is null
+            break;
         }
-        debugger;
-
-        //TODO: Answer event listener
-        
-        debugger
+        // show correct or wrong on screen for 1.5 seconds then blank it
+        setTimeout(function(){ responseTextEl.textContent="" }, 1500);
+        console.log("show result")
+        // return true so next question is queued
+        bButtonPressed=true
     }
-
 }
 
-// Show title screen 
-updateQuestion(questionDeck[0], false);
+function updateTimerLabel(timeValue) {
+    document.getElementById("remaining-time").textContent = timeValue;
+}
+
+function startQuiz(){
+    console.log ("Starting Quiz")
+    //Create event listeners for each answer button
+    // I tried to use a loop first, but for some reason, it didn't work 
+    // so I just made the 4 individually to get past it.
+    var answerButtonEl1 = document.getElementById("btn-answer-1")
+    answerButtonEl1.addEventListener('click',checkAnswer)
+    var answerButtonEl2 = document.getElementById("btn-answer-2")
+    answerButtonEl2.addEventListener('click',checkAnswer)
+    var answerButtonEl3 = document.getElementById("btn-answer-3")
+    answerButtonEl3.addEventListener('click',checkAnswer)
+    var answerButtonEl4 = document.getElementById("btn-answer-4")
+    answerButtonEl4.addEventListener('click',checkAnswer)
+        //start timer
+        // Tried using setInterval with a standard counter but I kept getting weird drift results
+        // so I have to change it to using the system clock b/c I can't rely on the counter.
+    const startQuizTime = Date.now();
+    endQuizTime = new Date(startQuizTime + (75 * 1000)); // This is beginning at 75 seconds from start time
+    timeLeft = parseInt((endQuizTime - Date.now())/1000)
+    //debugger
+    var gameTimer = setInterval(function() {
+        console.log("Current question: " + questionNumber)
+        if (questionNumber==="0"){
+            //special case for first question start b/c no need to check answer
+            updateQuestion(questionDeck[1])
+            updateTimerLabel("75")
+        }
+        else if (timeLeft > 0 && !bButtonPressed) {
+            //this means the question has not been answered yet, subtract 1 sec
+            //not updating screen in real time b/c there's a problem with updating the number
+            //when the answer changes the timer. i get multiple updates with different
+            //numbers
+            timeLeft = parseInt((endQuizTime - Date.now())/1000)
+            updateTimerLabel(timeLeft)
+        }
+        else if (timeLeft > 0 && bButtonPressed){
+            //this means the question has been answered and we should queue the next
+            updateQuestion(questionDeck[parseInt(questionNumber) + 1])
+            bButtonPressed = false
+            //show remaining time
+            timeLeft = parseInt((endQuizTime - Date.now())/1000)
+            updateTimerLabel(timeLeft)
+        }  
+         else {
+             // this means the timer has expired
+          updateTimerLabel = "00"
+          clearInterval(gameTimer)
+        }
+    }, 1000);
+}
+
+// Show quiz start screen 
+
+updateQuestion(questionDeck[0])
+debugger
 var beginQuizEl = document.getElementById("btn-answer-1")
-beginQuizEl.addEventListener('click',startQuiz)
+//researched this extra parameter b/c I only wanted it to fire once and then de-register.
+// https://www.amitmerchant.com/remove-event-listener-once-invoked-javascript/
+beginQuizEl.addEventListener("click",startQuiz,{once: true})
+
 
