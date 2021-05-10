@@ -4,6 +4,7 @@ var questionNumber = "0"
 var bEndOfGame = false
 var timeLeft
 var endQuizTime
+var score = 0
 
 //Create questions for the quiz
 var questionDeck = [
@@ -154,12 +155,17 @@ function updateQuestion(question){
                 {answerButtonEl.hidden = true
                 answerTextEl.appendChild(answerButtonEl)}
         }
+
+
+
+
+
+
         //Create the Correct/Wrong response div
         var footerEl = document.querySelector("footer");
         var responseTextEl = document.createElement("div")
         responseTextEl.className = "responseTextArea"
-        //responseTextEl.setAttribute("hidden",true)
-        responseTextEl.innerHTML = "<h2 class='responseTextArea' id='response-value'>Ready</h2>"
+        responseTextEl.innerHTML = "<h2 class='responseTextArea' id='response-value'></h2>"
         footerEl.appendChild(responseTextEl)
     }
     if (questionNumber!=="0"){
@@ -168,15 +174,17 @@ function updateQuestion(question){
         var questionTextEl = document.getElementById("Question")
         questionTextEl.textContent = question.questionText
     
-        //Create a random location for the correct answer
+        // Create a random location for the correct answer
+        // because it shouldn't be in the same location every time
+        // or hard-coded to a location
         var correctAnswerLocation = getRandomNumber(1,parseInt(question.numberChoices))
         var wrongAnswerLocation=0; // so we'll know where to put the remaining wrong answers
-       //console.log("Number of choices is: " + question.numberChoices.toString())
+        
+        //console.log("Number of choices is: " + question.numberChoices.toString())
 
         //Hiding or showing answer buttons based on number of choices for each question.
         for (var i=1; i<=4; i++){
             customIdName = "btn-answer-" + i.toString()
-            //console.log(customIdName)
             var buttonEl = document.getElementById(customIdName)
             if (i <= parseInt(question.numberChoices)){
                 buttonEl.hidden = false
@@ -225,15 +233,16 @@ function updateQuestion(question){
  } //end function
 
 function updateScore(bCorrect){
-    
-   // if bCorrect{
-
-  //  }
- //   else{
-
-   // }
-
-}
+    // Don't really know what the rules should be, so I'm making this up.
+    // 7 points for right answer and -3 for a wrong one... Good as any I guess   
+    switch (bCorrect){
+        case true:
+            score = score + 7
+        case false:
+            score = score - 3
+        default:
+    }
+} //end function
 
 
 function checkAnswer(answerPressed){
@@ -264,14 +273,23 @@ function checkAnswer(answerPressed){
         // return true so next question is queued
         bButtonPressed=true
     }
-}
+} //end function
 
 function updateTimerLabel(timeValue) {
     document.getElementById("remaining-time").textContent = timeValue;
+} //end function
+
+function endQuiz(){
+    var questionTitleEl = document.getElementById("title")
+    questionTitleEl.textContent = "All Done"
+    var unhideFinalScoreAreaEl = document.getElementById("finalScoreArea")
+    unhideFinalScoreAreaEl.setAttribute("hidden",false)
 }
 
 function startQuiz(){
     console.log ("Starting Quiz")
+    // Turn off View Scores button
+    document.getElementById("view-scores").disabled = true;
     //Create event listeners for each answer button
     // I tried to use a loop first, but for some reason, it didn't work 
     // so I just made the 4 individually to get past it.
@@ -319,15 +337,22 @@ function startQuiz(){
           clearInterval(gameTimer)
         }
     }, 1000);
+    //Show final score
+    endQuiz()
+    // Turn View Scores button back on
+    document.getElementById("view-scores").disabled = false;
+} //end function
+
+function showHighScores(){
+
 }
 
-// Show quiz start screen 
 
+// Show quiz start screen 
 updateQuestion(questionDeck[0])
-debugger
 var beginQuizEl = document.getElementById("btn-answer-1")
 //researched this extra parameter b/c I only wanted it to fire once and then de-register.
 // https://www.amitmerchant.com/remove-event-listener-once-invoked-javascript/
 beginQuizEl.addEventListener("click",startQuiz,{once: true})
-
-
+var viewScoresButtonEl = document.getElementById("view-scores")
+viewScoresButtonEl.addEventListener("click", showHighScores)

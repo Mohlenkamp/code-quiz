@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,17 +17,28 @@
         program to test users with timed technical questions 
         and keep a list of high scores
 -->
+
 <body>
     <nav>
         <button id="view-scores">View high scores</button>
         <label id="lbl-time">Time Remaining: <span id="remaining-time"></span></label>
     </nav>
     <main id="question area">
-       <!-- Populating via javascript -->
+        <!-- Populating via javascript -->
     </main>
+    <form method="POST">
+        <section id="finalScoreArea" hidden=true>
+            <div class="finalScore" id="finalScoreText">
+                <h3 id="yourScore">Your score was: <span id="totalScore"></span></h3>
+                <label for="initials">Enter Your Initials</label>
+                <input type="text" name="initials" id="initials" placeholder="3 letters max" />
+            </div>
+        </section>
+    </form>
     <footer>
-        
+        <!-- Populating via javascript -->
     </footer>
-<script src="./assets/js/script.js"></script>
+    <script src="./assets/js/script.js"></script>
 </body>
+
 </html>
