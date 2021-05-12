@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Quiz</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<!--    Developer: John Mohlenkamp                                  
+        Version 1.0 May 2020
+        Coding Quiz
+        This website will utilize javascript to demonstrate
+        dynamic html generation, event listeners, timers, and
+        data storage (and more) by creating a coding quiz 
+        program to test users with timed technical questions 
+        and keep a list of high scores
+-->
+
+<body>
+    <nav>
+        <button id="view-scores">View high scores</button>
+        <label id="lbl-time">Time Remaining: <span id="remaining-time"></span></label>
+    </nav>
+    <main id="question area">
+        <!-- Populating via javascript -->
+    </main>
+    <!-- <form method="POST">
+        <section id="finalScoreArea">
+            <div class="finalScore" id="finalScoreText">
+                <h3 id="yourScore">Your score was: <span id="totalScore"></span></h3>
+
+                <label for="initials">Enter Your Initials</label>
+                <input type="text" name="initials" id="initials" placeholder="3 letters max" />
+                <button id="submitInitials" type="submit">Submit</button>
+            </div>
+        </section>
+    </form> -->
+    <footer>
+        <div id="footerButtons">
+            <button id="goBack" onClick="window.location.reload();">Go Back</button><button id="clearScores" onClick="localStorage.clear();">Clear High Scores</button>
+        </div>  
+    </footer>
+    <script src="./assets/js/script.js"></script>
+</body>
+
+</html>
