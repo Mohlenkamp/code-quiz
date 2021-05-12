@@ -4,7 +4,7 @@ var questionNumber = "0"
 var bEndOfGame = false
 var timeLeft
 var endQuizTime
-var score = 50   // So people feel better
+var score = 0   
 var initialsText = ""
 
 //Create questions for the quiz
@@ -113,7 +113,7 @@ var questionDeck = [
         "questionType": "ok",
         "numberChoices": "1",
         "questionText": "Congratulations! You finished all the questions within the time limit.",
-        "answerRight": "Yippee!",
+        "answerRight": "Yippee!"
     }
 ]   
 
@@ -143,7 +143,7 @@ function updateQuestion(question){
         var labelEndGameEl = document.createElement("div")
         labelEndGameEl.id = "endGameArea"
         labelEndGameEl.hidden = true
-        labelEndGameEl.innerHTML = "<span id='highScoreText'></span><label id='labelInitials' for='initials'>Enter Your Initials </label><input type='text' name='initials' id='initials' placeholder=' 3 letters max ' /><button id='submitInitials' type='submit'> Submit </button>"
+        labelEndGameEl.innerHTML = "<span id='highScoreText'></span><label id='labelInitials' for='initials'>Enter Your Initials </label><input type='text' name='initials' id='initials' placeholder=' Initials here ' /><button id='submitInitials' type='submit'> Submit </button>"
         mainEl.appendChild(labelEndGameEl)
         var answerTextEl = document.createElement("div");
         answerTextEl.className = "main-answers";
@@ -302,6 +302,7 @@ function endQuiz(){
 
 function startQuiz(){
     console.log ("Starting Quiz")
+    score +=50 // So everyone feels better and because I don't like negative scores
     // Turn off View Scores button
     document.getElementById("view-scores").disabled = true;
     //Create event listeners for each answer button
@@ -344,11 +345,19 @@ function startQuiz(){
             //show remaining time
             timeLeft = parseInt((endQuizTime - Date.now())/1000)
             updateTimerLabel(timeLeft)
+            if (parseInt(questionNumber)===12){
+                //we're at the end of the question deck
+                timeLeft=0
+                updateTimerLabel("00")
+                clearInterval(gameTimer)
+                endQuiz()
+            }
         }  
          else {
              // this means the timer has expired
-          updateTimerLabel = "00"
+          updateTimerLabel("00")
           clearInterval(gameTimer)
+          endQuiz()
         }
     }, 1000);
 } //end function
@@ -403,6 +412,7 @@ function showHighScores(){
         document.querySelector('#labelInitials').hidden = true
         document.querySelector('#initials').hidden = true
         document.querySelector('#submitInitials').hidden = true
+        
 
     for (var i=1; i<4; i++){
         highScoreValue = "highScore" + i.toString()
@@ -415,11 +425,19 @@ function showHighScores(){
         document.querySelector(buttonValue).textContent = oldInitials + "   " + oldScore + " points"
     }
     //debugger
-    // Adding a Start Another Game button
-        document.querySelector('#btn-answer-4').hidden = false
-        document.querySelector('#btn-answer-4').textContent = "Just refresh screen to play again..."
+    // Unhide Go Back button and Clear Scores button in footer
+    document.querySelector("#footerButtons").hidden = false
+    document.querySelector("#goBack").hidden = false
+    document.querySelector("#clearScores").hidden = false
 }
 
+// ************** Begin Main Code ******************** //
+
+
+// Hide footer buttons until the end of game
+document.querySelector("#footerButtons").hidden = true
+document.querySelector("#goBack").hidden = true
+document.querySelector("#clearScores").hidden = true
 
 // Show quiz start screen 
 updateQuestion(questionDeck[0])

@@ -9,8 +9,6 @@
   }
   
   body {
-    background: #ededed;
-    color: var(--grey);
     margin: 25px;
     padding: 5px;
     min-height: 100vh;
@@ -64,7 +62,39 @@
   }
 
   main .main-answers button{
-    margin-top: 5px;
+    background-color: var(--purple);
+    border: none;
+    color: white;
+    padding: 15px 32px;
     text-align: left;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    }
+  
+    #highScoreText{
+      margin-top: 50px;
+      display: flex;
+      padding-left:20%;
+      padding-right:20%;
+      justify-content: center;
+      font-weight: bolder;
+      font-style: italic;
+    }
 
+  #footerButtons{
+    display:flex;
+    justify-content: space-evenly;
+   }
+
+  #goBack, #clearScores {
+
+  background-color: var(--purple);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 4px 2px;
   }
