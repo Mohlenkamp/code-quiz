@@ -4,7 +4,8 @@ var questionNumber = "0"
 var bEndOfGame = false
 var timeLeft
 var endQuizTime
-var score = 0
+var score = 50   // So people feel better
+var initialsText = ""
 
 //Create questions for the quiz
 var questionDeck = [
@@ -139,8 +140,14 @@ function updateQuestion(question){
         mainEl.appendChild(questionTitleEl)
         questionTextEl.innerHTML = "<h2 class='main-question' id='Question'>" + question.questionText + "</h2>";
         mainEl.appendChild(questionTextEl)
+        var labelEndGameEl = document.createElement("div")
+        labelEndGameEl.id = "endGameArea"
+        labelEndGameEl.hidden = true
+        labelEndGameEl.innerHTML = "<span id='highScoreText'></span><label id='labelInitials' for='initials'>Enter Your Initials </label><input type='text' name='initials' id='initials' placeholder=' 3 letters max ' /><button id='submitInitials' type='submit'> Submit </button>"
+        mainEl.appendChild(labelEndGameEl)
         var answerTextEl = document.createElement("div");
         answerTextEl.className = "main-answers";
+        answerTextEl.id = "mainAnswerArea"
         mainEl.appendChild(answerTextEl);
         //Creating the 4 answer buttons
         for (var i=1; i<5; i++) {
@@ -155,12 +162,6 @@ function updateQuestion(question){
                 {answerButtonEl.hidden = true
                 answerTextEl.appendChild(answerButtonEl)}
         }
-
-
-
-
-
-
         //Create the Correct/Wrong response div
         var footerEl = document.querySelector("footer");
         var responseTextEl = document.createElement("div")
@@ -242,6 +243,10 @@ function updateScore(bCorrect){
             score = score - 3
         default:
     }
+    if (timeLeft<=0){
+        bEndOfGame=true
+        endQuiz()
+    }
 } //end function
 
 
@@ -267,11 +272,15 @@ function checkAnswer(answerPressed){
             //This will happen only if the data-answer value is null
             break;
         }
-        // show correct or wrong on screen for 1.5 seconds then blank it
-        setTimeout(function(){ responseTextEl.textContent="" }, 1500);
+        // show correct or wrong on screen for 1 second then blank it
+        setTimeout(function(){ responseTextEl.textContent="" }, 1000);
         console.log("show result")
         // return true so next question is queued
         bButtonPressed=true
+        if (timeLeft<=0){
+            bEndOfGame=true
+            endQuiz()
+        }
     }
 } //end function
 
@@ -280,10 +289,15 @@ function updateTimerLabel(timeValue) {
 } //end function
 
 function endQuiz(){
+    console.log("Quiz is over.... Show results" + score)
     var questionTitleEl = document.getElementById("title")
     questionTitleEl.textContent = "All Done"
-    var unhideFinalScoreAreaEl = document.getElementById("finalScoreArea")
-    unhideFinalScoreAreaEl.setAttribute("hidden",false)
+    document.getElementById("Question").textContent = "Your score was: " + score
+    document.getElementById("btn-answer-1").hidden = true
+    document.getElementById("btn-answer-2").hidden = true
+    document.getElementById("btn-answer-3").hidden = true
+    document.getElementById("btn-answer-4").hidden = true 
+    document.getElementById("endGameArea").hidden= false
 }
 
 function startQuiz(){
@@ -337,14 +351,73 @@ function startQuiz(){
           clearInterval(gameTimer)
         }
     }, 1000);
-    //Show final score
-    endQuiz()
-    // Turn View Scores button back on
-    document.getElementById("view-scores").disabled = false;
 } //end function
 
 function showHighScores(){
+    // The local storage will hold 3 high score values from highest to lowest
+    // The score will be highScore1, highScore2, and highScore3
+    // and the associated initials will be highScore1Initials, etc....
 
+    document.getElementById("highScoreText").textContent = "Current High Scores"
+    // Get initials from input box
+    initialText = document.querySelector('#initials').value
+    var oldScore = 0
+    var oldInitials = ""
+    var highScore1 = ""
+    var highScore2 = ""
+    var highScore3 = ""
+    var highScoreValue = ""
+    var highScoreValueInitials = ""
+    var buttonValue = ""
+    // Initialize High Scores
+    for (var i=1; i<4; i++){
+        //Create variable to store highScore variable name as it loops
+        highScoreValue = "highScore" + i.toString()
+        highScoreValueInitials = highScoreValue + "Initials"
+        oldScore = localStorage.getItem(highScoreValue);
+        if (!oldScore){
+            //Value is null, so the list is not initialized
+            localStorage.setItem(highScoreValue, "0");
+            localStorage.setItem(highScoreValueInitials, "");
+        } 
+    }
+    for (var i=1; i<4; i++){
+        highScoreValue = "highScore" + i.toString()
+        highScoreValueInitials = highScoreValue + "Initials"
+        oldScore = localStorage.getItem(highScoreValue);
+            if (oldScore < score){
+            //If stored value is less than score, then insert
+            //Store existing entry
+            oldInitials = localStorage.getItem(highScoreValueInitials);
+            //Update with new high score value
+            localStorage.setItem(highScoreValue, score);
+            localStorage.setItem(highScoreValueInitials, initialText);
+            //Now test and adjust rest of list if necessary with previous value at the lower rank
+            score = oldScore
+            initialText = oldInitials    
+            } 
+        } 
+    // Display High Scores 
+    // 
+    // Hide/Unhide relevant targets
+        document.querySelector('#labelInitials').hidden = true
+        document.querySelector('#initials').hidden = true
+        document.querySelector('#submitInitials').hidden = true
+
+    for (var i=1; i<4; i++){
+        highScoreValue = "highScore" + i.toString()
+        highScoreValueInitials = highScoreValue + "Initials"
+        buttonValue = "#btn-answer-" + i.toString()
+        document.querySelector(buttonValue).hidden = false
+        oldScore = localStorage.getItem(highScoreValue)
+        oldInitials = localStorage.getItem(highScoreValueInitials)
+        console.log(oldInitials + "  " + oldScore)
+        document.querySelector(buttonValue).textContent = oldInitials + "   " + oldScore + " points"
+    }
+    //debugger
+    // Adding a Start Another Game button
+        document.querySelector('#btn-answer-4').hidden = false
+        document.querySelector('#btn-answer-4').textContent = "Just refresh screen to play again..."
 }
 
 
@@ -356,3 +429,5 @@ var beginQuizEl = document.getElementById("btn-answer-1")
 beginQuizEl.addEventListener("click",startQuiz,{once: true})
 var viewScoresButtonEl = document.getElementById("view-scores")
 viewScoresButtonEl.addEventListener("click", showHighScores)
+var processHighScoresEl = document.getElementById("submitInitials")
+processHighScoresEl.addEventListener("click",showHighScores)
